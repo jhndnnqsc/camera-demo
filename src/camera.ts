@@ -1,4 +1,5 @@
 import Konva from  "konva";
+import { stages } from "konva/lib/Stage";
 
 export default class extends Konva.Layer {
 
@@ -9,6 +10,8 @@ export default class extends Konva.Layer {
   wedge:Konva.Wedge = null;
   wedge2:Konva.Wedge = null;
   wedge3:Konva.Wedge = null;
+  camera:Konva.Rect = null;
+  group:Konva.Group = null;
 
   radiusDown:number = 0;
   deltaDown:number = 0;
@@ -54,10 +57,49 @@ export default class extends Konva.Layer {
     return -rad * 180 / Math.PI    
   }
 
-
+  getMousePoint()
+  {
+    var pt = this.getRelativePointerPosition();
+    var x  = pt.x - this.group.x() - this.wedge.x();
+    var y =  pt.y - this.group.y() - this.wedge.y();
+    return { x: x, y: y};
+  }
   constructor(centerX:number, centerY:number)
   {
     super();
+
+    this.group  = new Konva.Group();
+    this.add(this.group);
+
+    this.camera = new Konva.Rect({
+      x:centerX, 
+      y:centerY - 12,
+      width: 24,
+      height: 24,
+      fill: "lightgray",
+      stroke: "black",
+      strokeWidth: 1,
+      draggable: true,
+    });
+
+    this.camera.className = "crosshair";
+
+    this.camera.on('pointerenter', ()=>{
+      this.getStage().container().className = 'grab';
+    });
+
+    this.camera.on('pointerleave', ()=>{
+      this.getStage().container().className = '';
+    });
+
+
+    this.camera.on('dragstart', () => {
+      this.camera.stopDrag();
+      this.group.startDrag();
+    });    
+
+    this.group.add(this.camera);
+
   
     this.wedge = new Konva.Wedge({
       x: centerX,
@@ -69,36 +111,36 @@ export default class extends Konva.Layer {
       angle:0
     });
 
-    this.wedge.on('pointerdown', ()=> {
+    this.wedge.on('pointerenter', (evt)=> {
+      this.getStage().container().className = 'crosshair';
+    });
+
+    this.wedge.on('pointerdown', (evt)=> {
+//      evt.cancelBubble = true;
       this.isWedgeDown = true;
       this.radiusDown = this.radius;
       this.angleDown = this.angle;
       this.fovDown = this.fov;
-      this.downPt = this.getRelativePointerPosition();
-      var x  = this.downPt.x - this.wedge.x();
-      var y =  this.wedge.y() - this.downPt.y;
-      this.deltaDown = Math.sqrt(x*x + y*y);
+      this.downPt = this.getMousePoint();
+      console.log("downpt %f, %f", this.downPt.x, this.downPt.y);
+      this.deltaDown = Math.sqrt(this.downPt.x*this.downPt.x + this.downPt.y*this.downPt.y);
     });
 
-    this.wedge.on('pointermove', ()=> {
+    this.wedge.on('pointermove', (evt)=> {
+//      evt.cancelBubble = true;
       if(this.isWedgeDown)
       {
-        var currentPoint = this.getRelativePointerPosition();
-        // new angle between center and point
-        var x  = currentPoint.x - this.wedge.x();
-        var y =  this.wedge.y() - currentPoint.y;
-        var rad  = Math.atan(y/x);
-        if( x < 0 ) rad += Math.PI;
-        var newDelta = Math.sqrt(x*x + y*y);
-    
+        var currentPoint = this.getMousePoint();
+        console.log("currentPoint %f, %f", currentPoint.x, currentPoint.y);
+        var newDelta = Math.sqrt(currentPoint.x*currentPoint.x + currentPoint.y*currentPoint.y);
         if(this.isShiftDown)
         {
           this.fov = Math.min( 160, Math.max(30, this.fovDown + newDelta - this.deltaDown));
         }
         else
         {
-          var downAngle = this.calcAngle(this.wedge.x(), this.wedge.y(), this.downPt.x, this.downPt.y);
-          var currentAngle = this.calcAngle(this.wedge.x(), this.wedge.y(), currentPoint.x, currentPoint.y);
+          var downAngle = this.calcAngle(0, 0, this.downPt.x, this.downPt.y);
+          var currentAngle = this.calcAngle(0, 0, currentPoint.x, currentPoint.y);
           this.angle = this.angleDown + currentAngle - downAngle;
           this.radius = this.radiusDown + ( newDelta - this.deltaDown );
         }
@@ -106,8 +148,15 @@ export default class extends Konva.Layer {
       }
     });
 
-    this.wedge.on('pointerleave', () =>{this.isWedgeDown = false; });
-    this.wedge.on('pointerup', () =>{this.isWedgeDown = false; });
+    this.wedge.on('pointerleave', (evt) =>{
+      this.getStage().container().className = '';
+      this.isWedgeDown = false; 
+//      evt.cancelBubble = true; 
+    });
+    this.wedge.on('pointerup', (evt) =>{
+      this.isWedgeDown = false; 
+//      evt.cancelBubble = true; 
+    });
 
     this.wedge2 = new Konva.Wedge({
       x: centerX,
@@ -119,7 +168,7 @@ export default class extends Konva.Layer {
       angle:0
     });
 
-    this.add(this.wedge2);
+    this.group.add(this.wedge2);
 
     this.wedge3 = new Konva.Wedge({
       x: centerX,
@@ -131,11 +180,11 @@ export default class extends Konva.Layer {
       angle:0
     });
 
-    this.add(this.wedge3);
+    this.group.add(this.wedge3);
 
 
     // add the shape to the layer
-    this.add(this.wedge);
+    this.group.add(this.wedge);
     
     this.update();
 

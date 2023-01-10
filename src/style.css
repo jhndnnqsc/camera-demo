@@ -1,0 +1,11 @@
+body {
+  font: "Verdana";
+}
+
+.crosshair {
+  cursor: crosshair;
+}
+
+.grab {
+  cursor: grab;
+}

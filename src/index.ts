@@ -2,8 +2,10 @@ import Konva from  "konva";
 import Grid from "./grid";
 import Camera from "./camera"
 import Images from "./images"
+import "./style.css";
 
 function component() {
+
   const input = document.createElement("INPUT") as HTMLInputElement;
   input.type = "file";
   input.accept = "image/jpeg, image/png, image/jpg";
@@ -44,6 +46,10 @@ function component() {
   });
 
   var layer = new Konva.Layer();
+
+  var asdf = document.createElement("div");
+  asdf.innerText = "YO!!!";
+  crap.appendChild(asdf);
 
   crap.appendChild(input);
   crap.appendChild(element);
