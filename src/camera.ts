@@ -12,6 +12,7 @@ export default class extends Konva.Layer {
 
   radiusDown:number = 0;
   deltaDown:number = 0;
+  angleDown:number = 0;
   fovDown:number = 0;
   isWedgeDown:boolean = false;
   downPt:any = {};
@@ -44,6 +45,16 @@ export default class extends Konva.Layer {
     this.wedge3.radius(this.radius *.5);
   };
 
+  calcAngle(centerX:number, centerY: number, ptX:number, ptY:number)
+  {
+    var x  = ptX - centerX;
+    var y =  centerY - ptY;
+    var rad  = Math.atan(y/x);
+    if( x < 0 ) rad += Math.PI;
+    return -rad * 180 / Math.PI    
+  }
+
+
   constructor(centerX:number, centerY:number)
   {
     super();
@@ -52,7 +63,7 @@ export default class extends Konva.Layer {
       x: centerX,
       y: centerY,
       radius: 300,
-      fill: '#BBCCFF50',
+      fill: '#FFCCBB20',
       stroke: 'black',
       strokeWidth: 1,
       angle:0
@@ -60,14 +71,13 @@ export default class extends Konva.Layer {
 
     this.wedge.on('pointerdown', ()=> {
       this.isWedgeDown = true;
-      this.radiusDown = this.wedge.radius();
+      this.radiusDown = this.radius;
+      this.angleDown = this.angle;
+      this.fovDown = this.fov;
       this.downPt = this.getRelativePointerPosition();
-    
       var x  = this.downPt.x - this.wedge.x();
       var y =  this.wedge.y() - this.downPt.y;
-    
       this.deltaDown = Math.sqrt(x*x + y*y);
-      this.fovDown = this.fov;
     });
 
     this.wedge.on('pointermove', ()=> {
@@ -78,7 +88,6 @@ export default class extends Konva.Layer {
         var x  = currentPoint.x - this.wedge.x();
         var y =  this.wedge.y() - currentPoint.y;
         var rad  = Math.atan(y/x);
-//        writeMessage(" x " + x + " y " + y + " rad " + rad + " angle " + angle );
         if( x < 0 ) rad += Math.PI;
         var newDelta = Math.sqrt(x*x + y*y);
     
@@ -88,8 +97,10 @@ export default class extends Konva.Layer {
         }
         else
         {
-          this.angle = -rad * 180 / Math.PI;
-          this.radius = this.radiusDown + newDelta - this.deltaDown;
+          var downAngle = this.calcAngle(this.wedge.x(), this.wedge.y(), this.downPt.x, this.downPt.y);
+          var currentAngle = this.calcAngle(this.wedge.x(), this.wedge.y(), currentPoint.x, currentPoint.y);
+          this.angle = this.angleDown + currentAngle - downAngle;
+          this.radius = this.radiusDown + ( newDelta - this.deltaDown );
         }
         this.update();
       }
@@ -97,8 +108,6 @@ export default class extends Konva.Layer {
 
     this.wedge.on('pointerleave', () =>{this.isWedgeDown = false; });
     this.wedge.on('pointerup', () =>{this.isWedgeDown = false; });
-   
-
 
     this.wedge2 = new Konva.Wedge({
       x: centerX,

@@ -4,7 +4,7 @@ import Camera from "./camera"
 import Images from "./images"
 
 function component() {
-  const input = document.createElement("INPUT") as HTMLInputElement
+  const input = document.createElement("INPUT") as HTMLInputElement;
   input.type = "file";
   input.accept = "image/jpeg, image/png, image/jpg";
 

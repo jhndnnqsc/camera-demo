@@ -1,5 +1,4 @@
 import Konva from  "konva";
-import { Layer } from "konva/lib/Layer";
 
 export default class extends Konva.Layer {
   gridSize: number;
