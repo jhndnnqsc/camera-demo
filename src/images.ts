@@ -1,5 +1,4 @@
 import Konva from  "konva";
-
 export default class extends Konva.Layer {
 
   tx: Konva.Transformer;
@@ -26,6 +25,21 @@ export default class extends Konva.Layer {
         this.tx.nodes([]);
       }
     });
+
+    var img = new Image();
+    img.onload = () =>
+    {
+      this.add(new Konva.Image({
+        x: 400,
+        y: 500,
+        width: 1920/4,
+        height: 880/ 4,
+        image: img,
+        draggable: true,
+      }));
+    };
+    img.src = "./confroom.png";
+
    
   }
 
