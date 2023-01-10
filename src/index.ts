@@ -1,6 +1,6 @@
 import Konva from  "konva";
 import Grid from "./grid";
-import Camera from "./camera"
+import Camera from "./cameraView"
 import Images from "./images"
 import "./style.css";
 
