@@ -7,13 +7,13 @@ module.exports = {
   module: {
     rules: [
       {
+        test: /\.png/,
+        type: 'asset/resource',
+      },
+      {
         test: /\.tsx?$/,
         use: 'ts-loader',
         exclude: /node_modules/,
-      },
-      {
-        test: /\.(png|svg|jpg|jpeg|gif)$/i,
-        type: 'asset/resource',
       },
     ],
   },

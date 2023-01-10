@@ -1,4 +1,7 @@
 import Konva from  "konva";
+import Confroom from "./confroom.png";
+
+
 export default class extends Konva.Layer {
 
   tx: Konva.Transformer;
@@ -29,18 +32,19 @@ export default class extends Konva.Layer {
     var img = new Image();
     img.onload = () =>
     {
+      var w = img.width / 3;
+      var h = img.height / 3;
+
       this.add(new Konva.Image({
-        x: 400,
-        y: 500,
-        width: 1920/4,
-        height: 880/ 4,
+        x: this.getStage().width() / 2 - w / 2 - 200,
+        y: this.getStage().height() / 2 - h /2,
+        width: w,
+        height: h,
         image: img,
         draggable: true,
       }));
     };
-    img.src = "./confroom.png";
-
-   
+    img.src = Confroom;
   }
 
   addImageWithFile(file:File)

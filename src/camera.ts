@@ -2,10 +2,14 @@ import Konva from  "konva";
 
 export default class extends Konva.Layer {
 
-  angle: number = 60;
+  angle: number = 180;
   fov:number = 120;
   radius:number = 300;
+
   wedge:Konva.Wedge = null;
+  wedge2:Konva.Wedge = null;
+  wedge3:Konva.Wedge = null;
+
   radiusDown:number = 0;
   deltaDown:number = 0;
   fovDown:number = 0;
@@ -29,7 +33,15 @@ export default class extends Konva.Layer {
   {
     this.wedge.angle(this.fov);
     this.wedge.rotation(this.angle - this.fov/2);
-    this.wedge.radius(this.radius);
+    this.wedge.radius(this.radius*1.5);
+
+    this.wedge2.angle(this.fov);
+    this.wedge2.rotation(this.angle - this.fov/2);
+    this.wedge2.radius(this.radius);
+
+    this.wedge3.angle(this.fov);
+    this.wedge3.rotation(this.angle - this.fov/2);
+    this.wedge3.radius(this.radius *.5);
   };
 
   constructor(centerX:number, centerY:number)
@@ -85,6 +97,33 @@ export default class extends Konva.Layer {
 
     this.wedge.on('pointerleave', () =>{this.isWedgeDown = false; });
     this.wedge.on('pointerup', () =>{this.isWedgeDown = false; });
+   
+
+
+    this.wedge2 = new Konva.Wedge({
+      x: centerX,
+      y: centerY,
+      radius: 300,
+      fill: '#BBCCFF50',
+      stroke: 'black',
+      strokeWidth: 1,
+      angle:0
+    });
+
+    this.add(this.wedge2);
+
+    this.wedge3 = new Konva.Wedge({
+      x: centerX,
+      y: centerY,
+      radius: 300,
+      fill: '#AAEEFF50',
+      stroke: 'black',
+      strokeWidth: 1,
+      angle:0
+    });
+
+    this.add(this.wedge3);
+
 
     // add the shape to the layer
     this.add(this.wedge);
