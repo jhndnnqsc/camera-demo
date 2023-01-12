@@ -8,7 +8,7 @@ export default class extends Konva.Layer {
   limits:any;
 
   wedge:Konva.Wedge = null;
-  camera:Konva.Shape = null;
+  camera:Konva.Group = null;
   group:Konva.Group = null;
 
   fovRect:Konva.Rect = null;
@@ -114,14 +114,26 @@ DOF : ${(this.cam.DOF/1000).toPrecision(3)}m`);
 
     var camSize:number =  24;
 
-    this.camera = new Konva.Circle({
+
+    this.camera = new Konva.Group({ draggable: true });
+    this.camera.add(new Konva.Circle({
       width: camSize,
       height: camSize,
       fill: "lightgray",
       stroke: "black",
       strokeWidth: 1,
-      draggable: true,
-    });
+    }));
+    this.camera.add(new Konva.Rect({
+      x: -camSize/2,
+      y: -camSize/4,
+      width: camSize,
+      height: camSize/2,
+      fill: "lightgray",
+      stroke: "black",
+      strokeWidth: 1,
+    }));
+
+
 
     this.camera.className = "crosshair";
 
