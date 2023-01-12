@@ -9,6 +9,7 @@ export default class extends Konva.Layer {
 
   wedge:Konva.Wedge = null;
   camera:Konva.Group = null;
+  cameraSize:number = 24;
   group:Konva.Group = null;
 
   fovRect:Konva.Rect = null;
@@ -112,22 +113,19 @@ DOF : ${(this.cam.DOF/1000).toPrecision(3)}m`);
 
     this.add(this.infoText);
 
-    var camSize:number =  24;
-
-
     this.camera = new Konva.Group({ draggable: true });
     this.camera.add(new Konva.Circle({
-      width: camSize,
-      height: camSize,
+      width: this.cameraSize,
+      height: this.cameraSize,
       fill: "lightgray",
       stroke: "black",
       strokeWidth: 1,
     }));
     this.camera.add(new Konva.Rect({
-      x: -camSize/2,
-      y: -camSize/4,
-      width: camSize,
-      height: camSize/2,
+      x: -this.cameraSize/2,
+      y: -this.cameraSize/4,
+      width: this.cameraSize,
+      height: this.cameraSize/2,
       fill: "lightgray",
       stroke: "black",
       strokeWidth: 1,
@@ -153,10 +151,10 @@ DOF : ${(this.cam.DOF/1000).toPrecision(3)}m`);
 
     this.group.on('dragmove', () => {
       // limit so camera is always in 
-      this.group.x(Math.max(this.limits.left + this.offsetX() + this.camera.width()/2, this.group.x()));
-      this.group.x(Math.min(this.limits.right + this.offsetX() - this.camera.width()/2, this.group.x()));
-      this.group.y(Math.max(this.limits.top + this.offsetY() + this.camera.height()/2, this.group.y()));
-      this.group.y(Math.min(this.limits.bottom + this.offsetY() - this.camera.height()/2, this.group.y()));
+      this.group.x(Math.max(this.limits.left + this.offsetX() + this.cameraSize/2, this.group.x()));
+      this.group.x(Math.min(this.limits.right + this.offsetX() - this.cameraSize/2, this.group.x()));
+      this.group.y(Math.max(this.limits.top + this.offsetY() + this.cameraSize/2, this.group.y()));
+      this.group.y(Math.min(this.limits.bottom + this.offsetY() - this.cameraSize/2, this.group.y()));
     });    
 
 
@@ -171,7 +169,7 @@ DOF : ${(this.cam.DOF/1000).toPrecision(3)}m`);
       stroke: 'black',
       strokeWidth: 1,
       angle:0,
-      x: 12,
+      x: this.cameraSize/2,
     });
 
     this.wedge.on('pointerenter', (evt)=> {
@@ -219,7 +217,7 @@ DOF : ${(this.cam.DOF/1000).toPrecision(3)}m`);
       this.isWedgeDown = false; 
     });
 
-    this.fovGroup = new Konva.Group({ clipFunc: (cts)=> this.clipFOV(cts), x: 12 });
+    this.fovGroup = new Konva.Group({ clipFunc: (cts)=> this.clipFOV(cts), x: this.cameraSize/2 });
     this.group.add(this.fovGroup);
 
 
