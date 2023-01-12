@@ -1,4 +1,3 @@
-
 export class Camera {
   protected sensorDiagMM:number = 0;
   protected sensorWidthMM:number = 0;
@@ -11,7 +10,6 @@ export class Camera {
   rads(deg:number)
   {
     return deg*Math.PI/180;
-
   }
 
   _fStop:number = 1.8;
@@ -26,11 +24,6 @@ export class Camera {
   _nearDOF:number = 1234;
   public get nearDOF():number { return this._nearDOF; }
   public set nearDOF(val:number) { this._nearDOF = Math.max(this.minDOF, val);}
-
-
-  // public get sensorWidthMM():number {
-  //   return 2*this.minFocalLength * Math.tan(this.rads(80.8/2));
-  // }
 
   public get focalLength():number {
     return ( this.sensorWidthMM / 2 ) / ( Math.tan(this.rads(this.fov/2)))
@@ -53,10 +46,10 @@ export class Camera {
   }
 
   public get DOF():number{ return this.farDOF - this.nearDOF; }
+
 };
 
-export class NC12x80 extends Camera{
-
+export class NC12x80 extends Camera {
   constructor()
   {
     super();
@@ -66,7 +59,19 @@ export class NC12x80 extends Camera{
     this.maxFOV = 80.8;
     this.minFocalLength = 3.47;
     this.minDOF = 1000;
-
-    var crap = this.farDOF;
   }
 };
+
+export class NC20x60 extends Camera {
+  constructor()
+  {
+    super();
+    this.sensorDiagMM = (1/1.8)*25.4;
+    this.sensorWidthMM = 8.13;
+    this.minFOV = 4;
+    this.maxFOV = 66;
+    this.minFocalLength = 6.25;
+    this.minDOF = 2000;
+  }
+};
+
